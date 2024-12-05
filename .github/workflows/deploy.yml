@@ -12,6 +12,31 @@ on:
       - created
 
 jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18
+
+      - name: Install dependencies
+        run: |
+          npm install
+
+      - name: Runs Test
+        run: |
+          npm test
+
+      - name: Build Lambda package
+        run: |
+          cd lambda
+          zip -r ../lambda.zip .
+
   deploy:
     runs-on: ubuntu-latest
 
@@ -26,11 +51,11 @@ jobs:
 
       - name: Install dependencies
         run: |
-          cd lambda
           npm install
 
       - name: Build Lambda package
         run: |
+          npm run build
           cd lambda
           zip -r ../lambda.zip .
 
