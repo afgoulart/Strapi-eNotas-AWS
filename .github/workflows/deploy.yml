@@ -34,6 +34,7 @@ jobs:
 
       - name: Build Lambda package
         run: |
+          npm run build
           cd lambda
           zip -r ../lambda.zip .
 
