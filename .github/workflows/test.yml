@@ -39,7 +39,7 @@ jobs:
           zip -r ../lambda.zip .
 
       - name: Upload artifact
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: lambda-package-$GITHUB_PIPELINE_RUN_ID
           path: lambda.zip

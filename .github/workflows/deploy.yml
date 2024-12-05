@@ -4,7 +4,6 @@ name: Deploy
 env:
   OUTPUT-NAME: lambda
   BUCKET_NAME: lambda-versions-bucket
-  VERSION: 1
 
 on:
   release:
@@ -38,6 +37,12 @@ jobs:
           cd lambda
           zip -r ../lambda.zip .
 
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: lambda-package-$GITHUB_RELEASE_TAG
+          path: lambda.zip
+
   deploy:
     runs-on: ubuntu-latest
 
@@ -45,23 +50,8 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v3
 
-      - name: Set up Node.js
-        uses: actions/setup-node@v3
-        with:
-          node-version: 18
-
-      - name: Install dependencies
-        run: |
-          npm install
-
-      - name: Build Lambda package
-        run: |
-          npm run build
-          cd lambda
-          zip -r ../lambda.zip .
-
-      - name: Upload artifact
-        uses: actions/upload-artifact@v3
+      - name: Download artifact
+        uses: actions/download-artifact@v4
         with:
           name: lambda-package-$GITHUB_RELEASE_TAG
           path: lambda.zip
@@ -74,7 +64,7 @@ jobs:
           aws-region: us-east-1
 
       - name: Upload Lambda package to S3
-        run: aws s3 cp lambda.zip s3://${{env.BUCKET_NAME}}/${{env.OUTPUT-NAME}}-${{env.VERSION}}.zip
+        run: aws s3 cp lambda.zip s3://${{env.BUCKET_NAME}}/${{env.OUTPUT-NAME}}-$GITHUB_RELEASE_TAG.zip
 
       - name: Apply Terraform
         run: |
