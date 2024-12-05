@@ -1,0 +1,38 @@
+# yaml-language-server: $schema=https://json.schemastore.org/github-workflow.json
+name: Deploy
+
+env:
+  OUTPUT-NAME: lambda
+  BUCKET_NAME: lambda-versions-bucket
+  VERSION: 1
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18
+
+      - name: Install dependencies
+        run: |
+          npm install
+
+      - name: Runs Test
+        run: |
+          npm test
+
+      - name: Build Lambda package
+        run: |
+          cd lambda
+          zip -r ../lambda.zip .
