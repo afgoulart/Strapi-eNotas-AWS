@@ -1,5 +1,7 @@
 const envs = require("dotenv").config({ path: "./.env.test" });
 
+global.console.log = jest.fn();
+
 module.exports = {
   roots: ["<rootDir>/src"],
   transform: {
@@ -11,6 +13,7 @@ module.exports = {
     ],
   },
   testRegex: "(/__tests__/.*|(\\.|/)(test|spec))\\.tsx?$",
+  coverageReporters: ["clover", "json", "lcov", ["text", { skipFull: true }]],
   moduleFileExtensions: ["ts", "tsx", "js", "jsx", "json", "node"],
   env: {
     ...envs.parsed,
