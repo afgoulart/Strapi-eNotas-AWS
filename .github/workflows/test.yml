@@ -37,3 +37,9 @@ jobs:
           npm run build
           cd lambda
           zip -r ../lambda.zip .
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: lambda-package-$GITHUB_PIPELINE_RUN_ID
+          path: lambda.zip
