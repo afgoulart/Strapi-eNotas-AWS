@@ -1,5 +1,3 @@
-import axios from "axios";
-
 export const handler = async (event: { Records: any }) => {
   try {
     const cnpj = process.env.CNPJ;
@@ -32,17 +30,21 @@ export const handler = async (event: { Records: any }) => {
           },
         };
 
-        const response = await axios.post(
-          "https://api.enotas.com.br/v2/notas",
-          payload,
-          {
-            headers: {
-              Authorization: `Bearer ${enotasApiKey}`,
-            },
-          }
-        );
+        const response = await fetch("https://api.enotas.com.br/v2/notas", {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${enotasApiKey}`,
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(payload),
+        });
 
-        console.log(`Nota fiscal gerada com sucesso: ${response.data}`);
+        if (!response.ok) {
+          throw new Error(`Erro ao gerar nota fiscal: ${response.statusText}`);
+        }
+
+        await response.json();
+        console.log(`Nota fiscal gerada com sucesso!`);
       } else {
         console.log(`Evento ignorado: ${stripeEvent.type}`);
       }
@@ -52,8 +54,13 @@ export const handler = async (event: { Records: any }) => {
       statusCode: 200,
       body: JSON.stringify({ message: "Eventos processados com sucesso." }),
     };
-  } catch (error) {
+  } catch (error: any) {
     console.error("Erro ao processar eventos:", error);
-    throw new Error("Erro ao processar eventos da fila.");
+    // throw new Error("Erro ao processar eventos da fila.");
+    return {
+      statusCode: 500,
+      causes: error.message,
+      body: JSON.stringify({ message: "Erro ao processar eventos da fila." }),
+    };
   }
 };
