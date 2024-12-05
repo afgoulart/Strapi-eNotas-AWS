@@ -1,0 +1,13 @@
+{
+  "name": "process-stripe-events",
+  "version": "1.0.0",
+  "description": "Lambda para processar eventos do Stripe e integração com eNotas",
+  "main": "lambda/index.js",
+  "scripts": {
+    "start": "tsc && node lambda.js"
+  },
+  "dependencies": {
+    "@types/node": "^22.10.1",
+    "axios": "^1.4.0"
+  }
+}
